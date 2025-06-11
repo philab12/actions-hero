@@ -16,11 +16,20 @@ jobs:
       - name: Create comment
         uses: actions/github-script@v6
         with:
-          issue-number: ${{ github.event.issue.number }}
-          body: |
-            This is a multi-line test comment
-            - With GitHub **Markdown** :sparkles:
-            - Created by [create-or-update-comment][1]
-
-            [1]: https://github.com/peter-evans/create-or-update-comment
-          reactions: '+1'
+         script: |
+            const issue = context.payload.issue;
+            if (!issue.body.includes('### Steps to Reproduce') || 
+                !issue.body.includes('### Expected Behavior')) {
+              github.rest.issues.createComment({
+                issue_number: issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: 'Please include all required sections from the issue template.'
+              });
+              github.rest.issues.update({
+                issue_number: issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'closed'
+              });
+            }
