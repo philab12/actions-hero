@@ -13,23 +13,5 @@ jobs:
       - name: "dump github context"
         run: echo '${{ toJSON(github.event) }}' | jq
         shell: bash
-      - name: Create comment
-        uses: actions/github-script@v6
-        with:
-         script: |
-            const issue = context.payload.issue;
-            if (!issue.body.includes('### Steps to Reproduce') || 
-                !issue.body.includes('### Expected Behavior')) {
-              github.rest.issues.createComment({
-                issue_number: issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: 'Please include all required sections from the issue template.'
-              });
-              github.rest.issues.update({
-                issue_number: issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                state: 'closed'
-              });
-            }
+  
+     
